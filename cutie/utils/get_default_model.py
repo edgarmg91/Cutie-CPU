@@ -20,15 +20,21 @@ def get_default_model() -> CUTIE:
         cfg['weights'] = os.path.join(weight_dir, 'cutie-base-mega.pth')
     get_dataset_cfg(cfg)
 
-    #Set on CPU
-    #print(cfg)
-    #cfg['map_location'] = torch.device('cpu')
+    #Set on CUDA
+    if(torch.cuda.is_available()):
 
-    # Load the network weights
-    #cutie = CUTIE(cfg).cuda().eval()
-    cutie = CUTIE(cfg).eval()
-    model_weights = torch.load(cfg.weights, map_location=torch.device("cpu"))
-    #model_weights = torch.load(cfg.weights)
+        #Load the network weights
+        cutie = CUTIE(cfg).cuda().eval()
+        model_weights = torch.load(cfg.weights)  
+
+    #Set on CPU
+    else:
+    
+        #Load the network weights
+        cutie = CUTIE(cfg).eval()
+        model_weights = torch.load(cfg.weights, map_location=torch.device("cpu"))
+    
+    #Set weights
     cutie.load_weights(model_weights)
 
     return cutie
